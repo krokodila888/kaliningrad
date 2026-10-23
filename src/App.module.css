@@ -9,7 +9,7 @@
   background: var(--sea);
   color: var(--sea-ink);
   position: relative;
-  padding: 20px 16px 36px;
+  padding: 20px 0 36px;
   overflow: hidden;
 }
 
@@ -26,6 +26,7 @@
 .headerInner {
   max-width: 1360px;
   margin: 0 auto;
+  padding: 0 16px;
   display: grid;
   gap: 14px;
 }
@@ -168,6 +169,10 @@ button.homlinItem {
 
 button.homlinItem:hover {
   background: var(--surface-2);
+}
+
+.hintLong {
+  display: none;
 }
 
 .homlinFigure {
@@ -553,7 +558,11 @@ button.homlinItem:hover {
 /* ---------- Планшет: 4 колонки, ячейка в модальном окне ---------- */
 @media (min-width: 768px) {
   .header {
-    padding: 28px 32px 44px;
+    padding: 28px 0 44px;
+  }
+
+  .headerInner {
+    padding: 0 32px;
   }
 
   .layout,
@@ -577,6 +586,14 @@ button.homlinItem:hover {
 
   .homlinItem {
     font-size: 12px;
+  }
+
+  .hintShort {
+    display: none;
+  }
+
+  .hintLong {
+    display: inline;
   }
 
   .paneOpen {

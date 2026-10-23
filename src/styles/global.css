@@ -92,6 +92,10 @@ button {
   color: inherit;
 }
 
+[tabindex='-1']:focus {
+  outline: none;
+}
+
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;

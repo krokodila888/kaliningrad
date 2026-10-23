@@ -30,10 +30,16 @@ export function HomlinTracker({ progress, isUnlocked, onOpen, onBonus }: Props) 
           const day = homlinDays[h.id as HomlinId];
           const canOpen = day !== undefined && isUnlocked(day);
           const hint = isFound ? h.name : day ? `загадка в ячейке ${day}` : 'загадка впереди';
+          const shortHint = isFound ? h.name.split(' ').pop() : day ? `ячейка ${day}` : 'впереди';
           const content = (
             <>
               <HomlinSilhouette className={s.homlinFigure} />
-              <span>{hint}</span>
+              <span className={s.hintShort} aria-hidden="true">
+                {shortHint}
+              </span>
+              <span className={s.hintLong} aria-hidden="true">
+                {hint}
+              </span>
             </>
           );
           const cls = `${s.homlinItem} ${isFound ? s.homlinFound : ''}`;
