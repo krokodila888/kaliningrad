@@ -17,16 +17,17 @@ export function loadData(root: string) {
       throw new Error(`Не получилось прочитать data/${file}: ${(e as Error).message}`);
     }
   };
-  const data = validateData(read('cells.json'), read('homlins.json'));
-  for (const cell of data.cells) {
-    if (cell.image && !fs.existsSync(path.join(root, 'public', 'img', cell.image.src))) {
-      throw new Error(`Ошибки в данных календаря:\n  ячейка ${cell.day}: нет картинки public/img/${cell.image.src}`);
-    }
-  }
-  return data;
+  const cells = validateData(read('cells.json'));
+  const missing = cells.flatMap((cell) =>
+    (cell.images ?? [])
+      .filter((img) => !fs.existsSync(path.join(root, 'public', 'img', img.src)))
+      .map((img) => `  ячейка ${cell.day}: нет картинки public/img/${img.src}`),
+  );
+  if (missing.length) throw new Error(`Ошибки в данных календаря:\n${missing.join('\n')}`);
+  return cells;
 }
 
-/** Читает data/*.json, проверяет схему и отдаёт приложению зашифрованные ячейки. */
+/** Читает data/cells.json, проверяет схему и отдаёт приложению зашифрованные ячейки. */
 export function adventData(): Plugin {
   let root = process.cwd();
   return {
@@ -40,17 +41,11 @@ export function adventData(): Plugin {
     async load(id) {
       if (id !== RESOLVED_ID) return null;
       this.addWatchFile(path.join(root, 'data', 'cells.json'));
-      this.addWatchFile(path.join(root, 'data', 'homlins.json'));
-      const { cells, homlins } = loadData(root);
+      const cells = loadData(root);
       const sealed = await Promise.all(
         [...cells].sort((a, b) => a.day - b.day).map((c) => sealCell(c as Cell)),
       );
-      const homlinDays = Object.fromEntries(cells.filter((c) => c.homlin).map((c) => [c.homlin, c.day]));
-      return [
-        `export const sealedCells = ${JSON.stringify(sealed)};`,
-        `export const homlins = ${JSON.stringify(homlins)};`,
-        `export const homlinDays = ${JSON.stringify(homlinDays)};`,
-      ].join('\n');
+      return `export const sealedCells = ${JSON.stringify(sealed)};`;
     },
     handleHotUpdate(ctx) {
       if (ctx.file.replace(/\\/g, '/').includes('/data/')) {

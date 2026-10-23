@@ -85,12 +85,101 @@
   font-weight: 700;
 }
 
-.image {
-  border-radius: var(--radius);
+/* ---------- Картинки ---------- */
+.figure {
+  margin: 0;
+}
+
+.photo {
   width: 100%;
   height: auto;
-  max-height: 360px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+}
+
+.lead .photo {
+  max-height: 460px;
   object-fit: cover;
+  object-position: center 20%;
+}
+
+.lead {
+  margin: 0 -16px;
+}
+
+.lead .photo {
+  border-radius: 0;
+}
+
+.lead .figcaption {
+  padding: 0 16px;
+}
+
+.gallery {
+  display: grid;
+  gap: 16px;
+}
+
+.gallery .photo {
+  max-height: 520px;
+  object-fit: cover;
+  object-position: center 15%;
+}
+
+.figcaption {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.credit a {
+  color: inherit;
+}
+
+/* ---------- Погода ---------- */
+.weather {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--sea) 14%, var(--surface)), var(--surface) 70%);
+}
+
+.weatherMain {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.weatherBig {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  color: var(--sea);
+}
+
+.weatherTemp {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.weatherTemp span {
+  font-size: 20px;
+  color: var(--muted);
+}
+
+.weatherText {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.weatherTips {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
 }
 
 .story {
@@ -235,16 +324,6 @@
   margin-bottom: 2px;
 }
 
-.homlinCard {
-  background: linear-gradient(150deg, color-mix(in srgb, var(--amber) 18%, var(--surface)), var(--surface) 70%);
-}
-
-.riddle {
-  font-family: var(--font-head);
-  font-style: italic;
-  font-size: 19px;
-  margin: 0 0 14px;
-}
 
 /* ---------- События ---------- */
 .events {
@@ -570,6 +649,23 @@
 @media (min-width: 768px) {
   .body {
     padding: 28px 32px 32px;
+  }
+
+  .lead {
+    margin: 0;
+  }
+
+  .lead .photo {
+    border-radius: var(--radius);
+  }
+
+  .lead .figcaption {
+    padding: 0;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    align-items: start;
   }
 
   .practical {

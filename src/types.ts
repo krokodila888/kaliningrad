@@ -12,8 +12,6 @@ export type CellType =
   | 'birthday'
   | 'finale';
 
-export type HomlinId = 'karl' | 'marta' | 'varvara' | 'leo' | 'vitek' | 'ulya' | 'antoshka';
-
 export interface Practical {
   address?: string;
   hours?: string;
@@ -48,10 +46,23 @@ export interface Gift {
   code?: string;
 }
 
+export interface ImageCredit {
+  /** Автор, если известен */
+  author?: string;
+  /** «CC BY-SA 4.0», «Общественное достояние» … */
+  license: string;
+  /** Страница файла в источнике (например, Wikimedia Commons) */
+  url: string;
+}
+
 export interface CellImage {
   /** Путь относительно public/img */
   src: string;
+  /** Описание для незрячих */
   alt: string;
+  /** Подпись под картинкой */
+  caption?: string;
+  credit?: ImageCredit;
 }
 
 export interface Cell {
@@ -65,17 +76,9 @@ export interface Cell {
   practical: Practical;
   task?: Task;
   gift?: Gift;
-  homlin?: HomlinId;
-  image?: CellImage;
+  /** Первая — крупно, остальные — галереей */
+  images?: CellImage[];
   events?: CityEvent[];
-}
-
-export interface Homlin {
-  id: HomlinId;
-  name: string;
-  riddle: string;
-  place: string;
-  revealText: string;
 }
 
 /** То, что попадает в сборку: дата и тип открыты, остальное зашифровано. */
@@ -93,7 +96,6 @@ export interface Progress {
   seen: Record<IsoDate, string>;
   /** Подарок уже распакован — дальше без анимации */
   unwrapped: Record<IsoDate, true>;
-  /** Отметки «Нашла!» / «Сделала!» */
+  /** Отметки «Сделала!» */
   tasksDone: Record<IsoDate, true>;
-  homlinsFound: Partial<Record<HomlinId, true>>;
 }

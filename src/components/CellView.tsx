@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { Cell, IsoDate } from '../types';
 import { dayForDate, defaultTypeFor, formatDateLong, TOTAL_DAYS } from '../lib/calendar';
-import { homlinById, useCell } from '../lib/cells';
+import { useCell } from '../lib/cells';
 import { renderMarkdown } from '../lib/markdown';
 import { progressStore, useProgress } from '../lib/progress';
 import { kaliningradDate } from '../lib/time';
@@ -9,12 +9,16 @@ import { Icon, TYPE_LABEL, TypeIcon } from './icons';
 import { CityEvents } from './CityEvents';
 import { GiftBox } from './GiftBox';
 import { Confetti } from './Confetti';
+import { Gallery } from './Gallery';
+import { WeatherCard } from './WeatherCard';
+import type { Weather } from '../lib/weather';
 import s from './Cell.module.css';
 
 interface Props {
   date: IsoDate;
   unlocked: boolean;
   now: Date;
+  weather: Weather | null;
   onClose: () => void;
 }
 
@@ -41,7 +45,7 @@ function TopBar({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function CellView({ date, unlocked, now, onClose }: Props) {
+export function CellView({ date, unlocked, now, weather, onClose }: Props) {
   const day = dayForDate(date);
   const inRange = day >= 1 && day <= TOTAL_DAYS;
 
@@ -80,10 +84,10 @@ export function CellView({ date, unlocked, now, onClose }: Props) {
     );
   }
 
-  return <OpenCell date={date} now={now} onClose={onClose} />;
+  return <OpenCell date={date} now={now} weather={weather} onClose={onClose} />;
 }
 
-function OpenCell({ date, now, onClose }: { date: IsoDate; now: Date; onClose: () => void }) {
+function OpenCell({ date, now, weather, onClose }: Omit<Props, 'unlocked'>) {
   const state = useCell(date);
 
   if (state.status === 'loading') {
@@ -117,13 +121,11 @@ function OpenCell({ date, now, onClose }: { date: IsoDate; now: Date; onClose: (
     );
   }
 
-  return <CellContent cell={state.cell} now={now} onClose={onClose} />;
+  return <CellContent cell={state.cell} now={now} weather={weather} onClose={onClose} />;
 }
 
-function CellContent({ cell, now, onClose }: { cell: Cell; now: Date; onClose: () => void }) {
+function CellContent({ cell, now, weather, onClose }: { cell: Cell; now: Date; weather: Weather | null; onClose: () => void }) {
   const progress = useProgress();
-  const homlin = cell.homlin ? homlinById(cell.homlin) : undefined;
-  const homlinFound = cell.homlin ? !!progress.homlinsFound[cell.homlin] : false;
   const taskDone = !!progress.tasksDone[cell.date];
   const isBirthday = cell.type === 'birthday';
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -132,7 +134,6 @@ function CellContent({ cell, now, onClose }: { cell: Cell; now: Date; onClose: (
     progressStore.markSeen(cell.date);
   }, [cell.date]);
 
-  const toggleHomlin = () => cell.homlin && progressStore.setHomlinFound(cell.homlin, !homlinFound);
   const toggleTask = () => progressStore.setTaskDone(cell.date, !taskDone);
 
   const mapUrl = cell.practical.mapUrl;
@@ -160,16 +161,13 @@ function CellContent({ cell, now, onClose }: { cell: Cell; now: Date; onClose: (
           </h2>
         </header>
 
-        {cell.image && (
-          <img
-            className={s.image}
-            src={`${import.meta.env.BASE_URL}img/${cell.image.src}`}
-            alt={cell.image.alt}
-            loading="lazy"
-          />
-        )}
+        {cell.images && <Gallery images={cell.images} position="lead" />}
 
         <div className={`${s.text} ${s.story}`} dangerouslySetInnerHTML={{ __html: renderMarkdown(cell.story) }} />
+
+        {cell.images && <Gallery images={cell.images} position="rest" />}
+
+        <WeatherCard date={cell.date} weather={weather} />
 
         {cell.gift && <GiftBox date={cell.date} gift={cell.gift} />}
 
@@ -199,31 +197,6 @@ function CellContent({ cell, now, onClose }: { cell: Cell; now: Date; onClose: (
           </section>
         )}
 
-        {homlin && (
-          <section className={`${s.card} ${s.homlinCard} ${s.text}`} aria-labelledby={`homlin-${cell.date}`}>
-            <h3 id={`homlin-${cell.date}`} className={s.cardTitle}>
-              <Icon name="pin" />
-              {homlinFound ? homlin.name : 'Загадка хомлина'}
-            </h3>
-            <p className={s.riddle}>«{homlin.riddle}»</p>
-            <button
-              type="button"
-              className={`${s.bigBtn} ${homlinFound ? s.done : s.primary}`}
-              aria-pressed={homlinFound}
-              onClick={toggleHomlin}
-            >
-              {homlinFound ? <Icon name="check" /> : null}
-              {homlinFound ? 'Нашла' : 'Нашла!'}
-            </button>
-            {homlinFound && (
-              <div className={s.answer}>
-                <strong>{homlin.place}</strong>
-                {homlin.revealText}
-              </div>
-            )}
-            {homlinFound && <p className={s.hint}>Нажми ещё раз, если хочешь снять отметку</p>}
-          </section>
-        )}
 
         {hasPractical && (
           <section className={`${s.card} ${s.text}`} aria-labelledby={`practical-${cell.date}`}>
@@ -280,7 +253,7 @@ function CellContent({ cell, now, onClose }: { cell: Cell; now: Date; onClose: (
         )}
       </div>
 
-      {(mapUrl || homlin || cell.task) && (
+      {(mapUrl || cell.task) && (
         <div className={s.actionBar}>
           {mapUrl && (
             <a className={`${s.bigBtn} ${s.primary}`} href={mapUrl} target="_blank" rel="noopener noreferrer">
@@ -288,17 +261,7 @@ function CellContent({ cell, now, onClose }: { cell: Cell; now: Date; onClose: (
               На карте
             </a>
           )}
-          {homlin ? (
-            <button
-              type="button"
-              className={`${s.bigBtn} ${homlinFound ? s.done : s.secondary}`}
-              aria-pressed={homlinFound}
-              onClick={toggleHomlin}
-            >
-              {homlinFound ? <Icon name="check" /> : null}
-              {homlinFound ? 'Нашла' : 'Нашла!'}
-            </button>
-          ) : cell.task ? (
+          {cell.task && (
             <button
               type="button"
               className={`${s.bigBtn} ${taskDone ? s.done : s.secondary}`}
@@ -308,7 +271,7 @@ function CellContent({ cell, now, onClose }: { cell: Cell; now: Date; onClose: (
               {taskDone ? <Icon name="check" /> : null}
               {taskDone ? 'Сделала' : 'Сделала!'}
             </button>
-          ) : null}
+          )}
         </div>
       )}
     </article>

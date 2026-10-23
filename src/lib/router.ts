@@ -4,15 +4,13 @@ import type { IsoDate } from '../types';
 export type Route =
   | { name: 'home' }
   | { name: 'day'; date: IsoDate }
-  | { name: 'all' }
-  | { name: 'homlins' };
+  | { name: 'all' };
 
 export function parseHash(hash: string): Route {
   const h = hash.replace(/^#/, '');
   const m = /^day-(\d{4}-\d{2}-\d{2})$/.exec(h);
   if (m) return { name: 'day', date: m[1] };
   if (h === 'all') return { name: 'all' };
-  if (h === 'homlins') return { name: 'homlins' };
   return { name: 'home' };
 }
 
@@ -22,8 +20,6 @@ export function routeToHash(route: Route): string {
       return `#day-${route.date}`;
     case 'all':
       return '#all';
-    case 'homlins':
-      return '#homlins';
     default:
       return '';
   }

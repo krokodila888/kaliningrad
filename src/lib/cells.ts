@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import * as raw from 'virtual:advent-data';
-import type { Cell, Homlin, HomlinId, IsoDate, SealedCell } from '../types';
+import type { Cell, IsoDate, SealedCell } from '../types';
 import { openCell } from './crypto';
 
 const sealedCells = raw.sealedCells as SealedCell[];
-export const homlins = raw.homlins as Homlin[];
-export const homlinDays = raw.homlinDays as Partial<Record<HomlinId, number>>;
 
 const byDate = new Map<IsoDate, SealedCell>(sealedCells.map((c) => [c.date, c]));
 const cache = new Map<IsoDate, Promise<Cell | null>>();
@@ -54,8 +52,4 @@ export function useCells(dates: IsoDate[]): Map<IsoDate, Cell> {
     };
   }, [key]);
   return cells;
-}
-
-export function homlinById(id: HomlinId) {
-  return homlins.find((h) => h.id === id);
 }

@@ -124,6 +124,44 @@ const paths: Record<string, React.ReactNode> = {
       <path d="M10 21v-5h4v5" />
     </>
   ),
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+    </>
+  ),
+  partly: (
+    <>
+      <path d="M8 3.5v1.2M3.2 8.3h1.2M4.6 4.9l.9.9M11.4 4.9l-.9.9" />
+      <path d="M5.4 10.5a3.2 3.2 0 0 1 5.9-2.2" />
+      <path d="M8 19h10a3.5 3.5 0 0 0 .3-7 5 5 0 0 0-9.6 1.2A3 3 0 0 0 8 19z" />
+    </>
+  ),
+  cloud: <path d="M7 18h11a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 18z" />,
+  fog: (
+    <>
+      <path d="M7 12h11a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 12z" transform="translate(0 2)" />
+      <path d="M4 18h16M6 21h12" />
+    </>
+  ),
+  rain: (
+    <>
+      <path d="M7 14h11a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 14z" />
+      <path d="M8 17l-1 3M12 17l-1 3M16 17l-1 3" />
+    </>
+  ),
+  snow: (
+    <>
+      <path d="M7 14h11a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 14z" />
+      <path d="M8 18h.01M12 20h.01M16 18h.01M10 22h.01M14 22h.01" strokeWidth={2.6} />
+    </>
+  ),
+  storm: (
+    <>
+      <path d="M7 14h11a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 14z" />
+      <path d="M12.5 14l-2 4h3l-2 4" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof paths;
@@ -160,15 +198,4 @@ export const TYPE_LABEL: Record<CellType, string> = {
 
 export function TypeIcon({ type, className, withTitle }: { type: CellType; className?: string; withTitle?: boolean }) {
   return <Icon name={TYPE_ICON[type]} className={className} title={withTitle ? TYPE_LABEL[type] : undefined} />;
-}
-
-/** Силуэт хомлина: колпачок, круглая голова, тельце. */
-export function HomlinSilhouette({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 32 40" aria-hidden="true" focusable="false">
-      <path d="M16 1l7 13H9z" fill="currentColor" />
-      <circle cx="16" cy="18" r="6" fill="currentColor" />
-      <path d="M8 39c0-9 3.5-14 8-14s8 5 8 14z" fill="currentColor" />
-    </svg>
-  );
 }

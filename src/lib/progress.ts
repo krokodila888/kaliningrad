@@ -1,11 +1,11 @@
 import { useSyncExternalStore } from 'react';
-import type { HomlinId, IsoDate, Progress } from '../types';
+import type { IsoDate, Progress } from '../types';
 import { createSafeStorage, type SafeStorage } from './storage';
 
 const KEY = 'kaliningrad-advent:progress:v1';
 
 export function emptyProgress(): Progress {
-  return { version: 1, seen: {}, unwrapped: {}, tasksDone: {}, homlinsFound: {} };
+  return { version: 1, seen: {}, unwrapped: {}, tasksDone: {} };
 }
 
 export function parseProgress(raw: string | null): Progress {
@@ -19,7 +19,6 @@ export function parseProgress(raw: string | null): Progress {
       seen: obj(p.seen),
       unwrapped: obj(p.unwrapped),
       tasksDone: obj(p.tasksDone),
-      homlinsFound: obj(p.homlinsFound),
     };
   } catch {
     return emptyProgress();
@@ -61,9 +60,6 @@ export function createProgressStore(storage: SafeStorage) {
     },
     setTaskDone(date: IsoDate, done: boolean) {
       update((p) => ({ ...p, tasksDone: toggle(p.tasksDone, date, done) as Progress['tasksDone'] }));
-    },
-    setHomlinFound(id: HomlinId, found: boolean) {
-      update((p) => ({ ...p, homlinsFound: toggle(p.homlinsFound, id, found) }));
     },
   };
 }

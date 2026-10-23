@@ -51,6 +51,31 @@
   color: var(--amber);
 }
 
+.weatherNow {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  max-width: 60ch;
+}
+
+.weatherNow svg {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  color: var(--amber);
+}
+
+.weatherNow strong {
+  color: var(--amber);
+  font-size: 17px;
+}
+
+.weatherMeta {
+  opacity: 0.85;
+}
+
 .greeting {
   margin: 0;
   font-size: 17px;
@@ -112,88 +137,6 @@
   outline-color: var(--amber);
 }
 
-/* ---------- Хомлины ---------- */
-.tracker {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 4px 16px 0;
-  width: 100%;
-}
-
-.trackerTitle {
-  font-family: var(--font-head);
-  font-size: 18px;
-  margin: 0 0 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.trackerCount {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 500;
-}
-
-.trackerList {
-  list-style: none;
-  margin: 0;
-  padding: 0 0 4px;
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.homlinItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  width: 100%;
-  min-height: 72px;
-  padding: 6px 2px;
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  text-align: center;
-  font-size: 11px;
-  line-height: 1.2;
-  color: var(--muted);
-}
-
-button.homlinItem {
-  cursor: pointer;
-}
-
-button.homlinItem:hover {
-  background: var(--surface-2);
-}
-
-.hintLong {
-  display: none;
-}
-
-.homlinFigure {
-  width: 26px;
-  height: 32px;
-  color: color-mix(in srgb, var(--muted) 45%, transparent);
-}
-
-.homlinFound .homlinFigure {
-  color: var(--amber);
-  filter: drop-shadow(0 1px 0 var(--brick));
-}
-
-.homlinFound {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.bonusLink {
-  margin-top: 8px;
-}
 
 /* ---------- Основной макет ---------- */
 .layout {
@@ -433,6 +376,13 @@ button.homlinItem:hover {
   color: var(--sea);
 }
 
+.feedThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
 .feedDate {
   display: block;
   font-size: 13px;
@@ -565,8 +515,7 @@ button.homlinItem:hover {
     padding: 0 32px;
   }
 
-  .layout,
-  .tracker {
+  .layout {
     padding-left: 32px;
     padding-right: 32px;
   }
@@ -580,21 +529,6 @@ button.homlinItem:hover {
     font-size: 36px;
   }
 
-  .trackerList {
-    max-width: 640px;
-  }
-
-  .homlinItem {
-    font-size: 12px;
-  }
-
-  .hintShort {
-    display: none;
-  }
-
-  .hintLong {
-    display: inline;
-  }
 
   .paneOpen {
     inset: 32px;

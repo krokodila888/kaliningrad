@@ -4,6 +4,8 @@ export const START_DATE: IsoDate = '2026-10-24';
 export const TOTAL_DAYS = 32;
 export const BIRTHDAY: IsoDate = '2026-11-01';
 export const FRIEND_NAME = 'Зёбра';
+/** Родительный падеж: «для Зёбры» */
+export const FRIEND_NAME_GEN = 'Зёбры';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

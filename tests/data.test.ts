@@ -8,25 +8,35 @@ import { renderMarkdown } from '../src/lib/markdown';
 import type { Cell } from '../src/types';
 
 const cells = JSON.parse(fs.readFileSync('data/cells.json', 'utf8'));
-const homlins = JSON.parse(fs.readFileSync('data/homlins.json', 'utf8'));
 
 describe('данные', () => {
-  it('data/cells.json и data/homlins.json проходят проверку', () => {
-    expect(() => validateData(cells, homlins)).not.toThrow();
+  it('data/cells.json проходит проверку', () => {
+    expect(() => validateData(cells)).not.toThrow();
+  });
+
+  it('у каждой картинки есть описание и указан источник', () => {
+    for (const cell of cells) {
+      for (const img of cell.images ?? []) {
+        expect(img.alt.length).toBeGreaterThan(10);
+        expect(img.credit?.url).toMatch(/^https:\/\//);
+        expect(fs.existsSync(`public/img/${img.src}`)).toBe(true);
+      }
+    }
   });
 
   it('опечатка в дате ломает проверку с понятной ошибкой', () => {
     const broken = [{ ...cells[0], date: '2026-10-25' }];
-    expect(() => validateData(broken, homlins)).toThrow(/ячейка 1 должна быть на 2026-10-24/);
+    expect(() => validateData(broken)).toThrow(/ячейка 1 должна быть на 2026-10-24/);
   });
 
   it('неизвестный тип и лишнее поле ломают проверку', () => {
-    expect(() => validateData([{ ...cells[0], type: 'histroy' }], homlins)).toThrow();
-    expect(() => validateData([{ ...cells[0], titel: 'x' }], homlins)).toThrow();
+    expect(() => validateData([{ ...cells[0], type: 'histroy' }])).toThrow();
+    expect(() => validateData([{ ...cells[0], titel: 'x' }])).toThrow();
   });
 
-  it('ссылка на несуществующего хомлина ломает проверку', () => {
-    expect(() => validateData([{ ...cells[0], homlin: 'karl' }], [])).toThrow(/хомлина «karl» нет/);
+  it('картинка с путём вместо имени файла ломает проверку', () => {
+    const bad = [{ ...cells[0], images: [{ src: '../secret.png', alt: 'описание картинки' }] }];
+    expect(() => validateData(bad)).toThrow(/имя файла из public\/img/);
   });
 });
 

@@ -33,11 +33,17 @@ export function Feed({ isUnlocked, seen, onOpen, onClose }: Props) {
         <ul className={s.feedList}>
           {dates.map((date) => {
             const type = typeFor(date);
-            const title = cells.get(date)?.title ?? TYPE_LABEL[type];
+            const cell = cells.get(date);
+            const title = cell?.title ?? TYPE_LABEL[type];
+            const thumb = cell?.images?.[0];
             return (
               <li key={date}>
                 <button type="button" className={s.feedItem} onClick={() => onOpen(date)}>
-                  <TypeIcon type={type} className={s.feedIcon} />
+                  {thumb ? (
+                    <img className={s.feedThumb} src={`${import.meta.env.BASE_URL}img/${thumb.src}`} alt="" loading="lazy" />
+                  ) : (
+                    <TypeIcon type={type} className={s.feedIcon} />
+                  )}
                   <span>
                     <span className={s.feedDate}>{formatDateLong(date)}</span>
                     <span className={s.feedTitle}>{title}</span>

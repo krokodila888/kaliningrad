@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { IsoDate } from './types';
-import { BIRTHDAY, END_DATE, FRIEND_NAME, START_DATE, TOTAL_DAYS, dayForDate, formatDate, formatDateLong } from './lib/calendar';
+import { BIRTHDAY, END_DATE, FRIEND_NAME, FRIEND_NAME_GEN, START_DATE, TOTAL_DAYS, dayForDate, formatDate, formatDateLong } from './lib/calendar';
 import { isUnlocked as isUnlockedAt, kaliningradDate } from './lib/time';
 import { noonInKaliningrad, useNow } from './lib/clock';
 import { useProgress } from './lib/progress';
@@ -9,7 +9,8 @@ import { usePreviewMode } from './lib/preview';
 import { Grid } from './components/Grid';
 import { CellView } from './components/CellView';
 import { Feed } from './components/Feed';
-import { HomlinBonus, HomlinTracker } from './components/HomlinTracker';
+import { WeatherNowChip } from './components/WeatherCard';
+import { useWeather } from './lib/weather';
 import { PreviewPanel } from './components/PreviewPanel';
 import { Icon } from './components/icons';
 import s from './App.module.css';
@@ -31,6 +32,7 @@ export function App() {
   const now = preview && simDate ? noonInKaliningrad(simDate) : realNow;
   const today = kaliningradDate(now);
   const progress = useProgress();
+  const weather = useWeather();
   const route = parseHash(useHash());
   const [toast, setToast] = useState<string | null>(null);
   const paneRef = useRef<HTMLElement>(null);
@@ -105,11 +107,12 @@ export function App() {
     <div className={s.app}>
       <header className={s.header}>
         <div className={s.headerInner}>
-          <p className={s.eyebrow}>Уральская, 10 · {formatDateLong(today)}</p>
+          <p className={s.eyebrow}>{formatDateLong(today)}</p>
           <h1 className={s.title}>
             Калининградский <em>адвент</em>
           </h1>
           <p className={s.greeting}>{greeting(today)}</p>
+          <WeatherNowChip weather={weather} />
           <div className={s.actions}>
             <button type="button" className={`${s.btn} ${s.btnPrimary}`} onClick={goToday}>
               <Icon name="gift" />
@@ -121,13 +124,6 @@ export function App() {
           </div>
         </div>
       </header>
-
-      <HomlinTracker
-        progress={progress}
-        isUnlocked={isUnlocked}
-        onOpen={openDay}
-        onBonus={() => navigate({ name: 'homlins' })}
-      />
 
       <main className={s.layout}>
         <section aria-labelledby="calendar-title">
@@ -158,13 +154,13 @@ export function App() {
               date={route.date}
               unlocked={isUnlocked(dayForDate(route.date))}
               now={now}
+              weather={weather}
               onClose={close}
             />
           )}
           {route.name === 'all' && (
             <Feed isUnlocked={isUnlocked} seen={progress.seen} onOpen={openDay} onClose={close} />
           )}
-          {route.name === 'homlins' && <HomlinBonus progress={progress} onClose={close} />}
           {route.name === 'home' && (
             <div className={s.welcome}>
               <h2>Выбери ячейку</h2>
@@ -181,7 +177,7 @@ export function App() {
         </aside>
       </main>
 
-      <footer className={s.footer}>Сделано с любовью для {FRIEND_NAME} · Калининград, осень 2026</footer>
+      <footer className={s.footer}>Сделано для {FRIEND_NAME_GEN} · Калининград, осень 2026</footer>
 
       {preview && (
         <PreviewPanel
