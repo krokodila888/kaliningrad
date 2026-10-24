@@ -58,6 +58,14 @@ export function GiftBox({ date, gift }: { date: IsoDate; gift: Gift }) {
         <div className={s.giftContent}>
           <h4 className={`${s.giftTitle}`}>{gift.title}</h4>
           <div dangerouslySetInnerHTML={{ __html: renderMarkdown(gift.description) }} />
+          {gift.image && (
+            <img
+              className={s.giftImage}
+              src={`${import.meta.env.BASE_URL}img/${gift.image.src}`}
+              alt={gift.image.alt}
+              loading="lazy"
+            />
+          )}
           {gift.code && (
             <p>
               Код: <span className={s.code}>{gift.code}</span>

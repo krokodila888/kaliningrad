@@ -19,7 +19,7 @@ export function loadData(root: string) {
   };
   const cells = validateData(read('cells.json'));
   const missing = cells.flatMap((cell) =>
-    (cell.images ?? [])
+    [...(cell.images ?? []), ...(cell.gift?.image ? [cell.gift.image] : [])]
       .filter((img) => !fs.existsSync(path.join(root, 'public', 'img', img.src)))
       .map((img) => `  ячейка ${cell.day}: нет картинки public/img/${img.src}`),
   );

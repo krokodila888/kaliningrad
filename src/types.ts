@@ -44,6 +44,8 @@ export interface Gift {
   description: string;
   link?: string;
   code?: string;
+  /** Показывается только после распаковки (например, билет с кодом) */
+  image?: CellImage;
 }
 
 export interface ImageCredit {

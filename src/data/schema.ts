@@ -5,6 +5,15 @@ const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'дата в форма�
 const url = z.string().url('ссылка должна начинаться с https://');
 const nonEmpty = z.string().trim().min(1, 'не может быть пустым');
 
+const imageSchema = z
+  .object({
+    src: z.string().regex(/^[\w.-]+\.(webp|jpe?g|png|avif)$/i, 'имя файла из public/img, например kant.webp'),
+    alt: nonEmpty,
+    caption: nonEmpty.optional(),
+    credit: z.object({ author: nonEmpty.optional(), license: nonEmpty, url }).strict().optional(),
+  })
+  .strict();
+
 export const cellTypeSchema = z.enum([
   'intro', 'history', 'taste', 'route', 'museum', 'gift', 'trip', 'slow', 'birthday', 'finale',
 ]);
@@ -29,22 +38,16 @@ export const cellSchema = z
       .strict(),
     task: z.object({ text: nonEmpty, answer: nonEmpty.optional() }).strict().optional(),
     gift: z
-      .object({ title: nonEmpty, description: nonEmpty, link: url.optional(), code: nonEmpty.optional() })
+      .object({
+        title: nonEmpty,
+        description: nonEmpty,
+        link: url.optional(),
+        code: nonEmpty.optional(),
+        image: imageSchema.optional(),
+      })
       .strict()
       .optional(),
-    images: z
-      .array(
-        z
-          .object({
-            src: z.string().regex(/^[\w.-]+\.(webp|jpe?g|png|avif)$/i, 'имя файла из public/img, например kant.webp'),
-            alt: nonEmpty,
-            caption: nonEmpty.optional(),
-            credit: z.object({ author: nonEmpty.optional(), license: nonEmpty, url }).strict().optional(),
-          })
-          .strict(),
-      )
-      .max(4, 'не больше 4 картинок в ячейке')
-      .optional(),
+    images: z.array(imageSchema).max(4, 'не больше 4 картинок в ячейке').optional(),
     events: z
       .array(
         z

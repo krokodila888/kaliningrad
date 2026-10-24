@@ -27,8 +27,13 @@ function greeting(today: IsoDate): string {
 export function App() {
   const preview = usePreviewMode();
   const realNow = useNow();
-  const [simDate, setSimDate] = useState<IsoDate | null>(null);
-  const [openAll, setOpenAll] = useState(true);
+  // Режим автора: ?preview=…&date=2026-11-03 сразу «перематывает» на этот день (без открытия всех ячеек).
+  const [startDate] = useState<IsoDate | null>(() => {
+    const d = new URLSearchParams(window.location.search).get('date');
+    return d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null;
+  });
+  const [simDate, setSimDate] = useState<IsoDate | null>(startDate);
+  const [openAll, setOpenAll] = useState(!startDate);
   const now = preview && simDate ? noonInKaliningrad(simDate) : realNow;
   const today = kaliningradDate(now);
   const progress = useProgress();
