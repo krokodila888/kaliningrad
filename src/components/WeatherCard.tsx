@@ -20,6 +20,11 @@ export function WeatherCard({ date, weather }: { date: IsoDate; weather: Weather
   const day = weather?.days.find((d) => d.date === date);
   if (!day) return null;
   const w = describeWeather(day.code);
+  // Первый день прогноза — сегодня: показываем «сейчас», как в шапке, а за день — диапазон.
+  const isToday = weather!.days[0]?.date === date;
+  const nowW = describeWeather(weather!.now.code);
+  const range = `от ${formatTemp(day.tMin)} до ${formatTemp(day.tMax)}`;
+  const details = `${w.text}${day.precipProb !== null ? ` · осадки ${day.precipProb}%` : ''} · ветер до ${Math.round(day.windMax)} м/с`;
   return (
     <section className={`${s.card} ${s.text} ${s.weather}`} aria-labelledby={`weather-${date}`}>
       <h3 id={`weather-${date}`} className={s.cardTitle}>
@@ -27,16 +32,22 @@ export function WeatherCard({ date, weather }: { date: IsoDate; weather: Weather
         Погода на день
       </h3>
       <div className={s.weatherMain}>
-        <Icon name={KIND_ICON[w.kind]} className={s.weatherBig} />
-        <div>
-          <p className={s.weatherTemp}>
-            {formatTemp(day.tMax)} <span>/ {formatTemp(day.tMin)}</span>
-          </p>
-          <p className={s.weatherText}>
-            {w.text}
-            {day.precipProb !== null ? ` · осадки ${day.precipProb}%` : ''} · ветер до {Math.round(day.windMax)} м/с
-          </p>
-        </div>
+        <Icon name={KIND_ICON[isToday ? nowW.kind : w.kind]} className={s.weatherBig} />
+        {isToday ? (
+          <div>
+            <p className={s.weatherTemp}>
+              {formatTemp(weather!.now.temp)} <span>сейчас, {nowW.text}</span>
+            </p>
+            <p className={s.weatherText}>
+              За день: {range}, {details}
+            </p>
+          </div>
+        ) : (
+          <div>
+            <p className={s.weatherTemp}>{range}</p>
+            <p className={s.weatherText}>{details}</p>
+          </div>
+        )}
       </div>
       <ul className={s.weatherTips}>
         {weatherTips(day).map((t) => (
