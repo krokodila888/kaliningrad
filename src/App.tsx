@@ -21,7 +21,7 @@ function greeting(today: IsoDate): string {
   if (today === BIRTHDAY) return `С днём рождения, ${FRIEND_NAME}! Сегодня ячейка особенная.`;
   const day = dayForDate(today);
   if (day === TOTAL_DAYS) return `${FRIEND_NAME}, сегодня последний день календаря. Спасибо, что гуляла с ним весь месяц.`;
-  return `${FRIEND_NAME}, сегодня день ${day} из ${TOTAL_DAYS}. Каждый день в полночь открывается новая ячейка — а открытые остаются с тобой насовсем.`;
+  return `Привет, ${FRIEND_NAME}! Это адвент с бессмысленными штуками про Калининград. Каждый день в полночь открывается новая ячейка.`;
 }
 
 export function App() {

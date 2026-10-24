@@ -35,7 +35,8 @@ export default defineConfig({
         navigateFallback: `${BASE}index.html`,
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.startsWith(`${BASE}img/`),
+            // Только RegExp: функции переносятся в sw.js текстом и не видят переменных этого файла.
+            urlPattern: new RegExp(`^${BASE}img/`.replace(/\//g, '\\/')),
             handler: 'CacheFirst',
             options: {
               cacheName: 'advent-images',
