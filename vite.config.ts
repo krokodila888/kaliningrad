@@ -36,7 +36,8 @@ export default defineConfig({
         runtimeCaching: [
           {
             // Только RegExp: функции переносятся в sw.js текстом и не видят переменных этого файла.
-            urlPattern: new RegExp(`^${BASE}img/`.replace(/\//g, '\\/')),
+            // Workbox сверяет его с полным адресом (https://…), поэтому без «^» в начале.
+            urlPattern: new RegExp(`${BASE}img/`.replace(/\//g, '\\/')),
             handler: 'CacheFirst',
             options: {
               cacheName: 'advent-images',
