@@ -31,9 +31,29 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        navigateFallback: `${BASE}index.html`,
+        // В предкэше только иконки. Страница и файлы сборки кэшируются по мере загрузки (ниже):
+        // так сохранённая страница и её скрипты всегда из одной версии, а после обновления
+        // сайта новая версия видна с первого же захода.
+        globPatterns: ['*.{svg,png}'],
+        navigateFallback: null,
         runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'advent-pages',
+              // На косе связь слабая: если сеть не ответила за 3 секунды — показываем сохранённую страницу.
+              networkTimeoutSeconds: 3,
+              expiration: { maxEntries: 10 },
+            },
+          },
+          {
+            // Файлы сборки с хэшем в имени никогда не меняются. Старые не удаляем сразу,
+            // чтобы сохранённая страница прошлой версии тоже открывалась без сети.
+            urlPattern: new RegExp(`${BASE}assets/`.replace(/\//g, '\\/')),
+            handler: 'CacheFirst',
+            options: { cacheName: 'advent-assets', expiration: { maxEntries: 200 } },
+          },
           {
             // Только RegExp: функции переносятся в sw.js текстом и не видят переменных этого файла.
             // Workbox сверяет его с полным адресом (https://…), поэтому без «^» в начале.
